@@ -227,6 +227,7 @@ class PluxDevice:
                     attempt_count, 
                     self.mac_address
                 )
+                # Create a new PLUX device instance
                 self.device = self.plux.SignalsDev(self.mac_address)
                 logger.info("✅ Connected to device: %s", self.mac_address)
                 return
@@ -307,28 +308,45 @@ class PluxDevice:
         sys.exit(0)
     
     def _cleanup_processes(self) -> None:
-        """Clean up any stuck PLUX processes."""
-        logger.info("🧹 Cleaning up PLUX processes...")
+        """Clean up any stuck PLUX processes for this specific device."""
+        logger.info("🧹 Cleaning up PLUX processes for device %s...", self.mac_address)
         try:
             if platform.system() == "Windows":
-                # Windows process cleanup - try various possible process names
-                processes_to_kill = [
-                    "bth_macprocess.exe",
-                    "plux.exe", 
-                    "python.exe",  # Sometimes Python processes get stuck
-                ]
-                
-                for process_name in processes_to_kill:
-                    subprocess.run(
-                        ["taskkill", "/F", "/IM", process_name], 
-                        check=False, 
-                        capture_output=True,
-                        timeout=5  # Don't hang if taskkill is slow
-                    )
+                # Windows: Only kill PLUX-specific processes, not all Python/uv
+                # Kill bth_macprocess that might be stuck for this MAC
+                subprocess.run(
+                    ["taskkill", "/F", "/FI", f"WINDOWTITLE eq *{self.mac_address}*"],
+                    check=False,
+                    capture_output=True,
+                    timeout=5
+                )
+                # Kill any bth_macprocess.exe
+                subprocess.run(
+                    ["taskkill", "/F", "/IM", "bth_macprocess.exe"],
+                    check=False,
+                    capture_output=True,
+                    timeout=5
+                )
             else:
-                # Unix/Linux/macOS process cleanup
-                subprocess.run(["pkill", "-f", "bth_macprocess"], check=False)
-                subprocess.run(["pkill", "-f", "plux"], check=False)
+                # Unix/Linux/macOS: Target specific processes with MAC address
+                # Kill bth_macprocess processes for this specific MAC
+                subprocess.run(
+                    ["pkill", "-f", f"bth_macprocess.*{self.mac_address}"],
+                    check=False,
+                    timeout=5
+                )
+                # Kill any remaining bth_macprocess processes
+                subprocess.run(
+                    ["pkill", "-f", "bth_macprocess"],
+                    check=False,
+                    timeout=5
+                )
+                # Only kill mobi-physio-api processes, not all uv processes
+                subprocess.run(
+                    ["pkill", "-f", "mobi-physio-api"],
+                    check=False,
+                    timeout=5
+                )
             
             logger.info("✓ Cleanup completed")
         except Exception as e:
