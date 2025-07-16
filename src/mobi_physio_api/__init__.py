@@ -1,7 +1,7 @@
 """MoBI Physio API.
 
-A robust, cross-platform Python API for PLUX biosignals devices (EMG, SpO2, 
-EDA, ECG, ACC, etc.) with automatic sensor detection, LSL streaming, and 
+A robust, cross-platform Python API for PLUX biosignals devices (EMG, SpO2,
+EDA, ECG, ACC, etc.) with automatic sensor detection, LSL streaming, and
 production-ready features.
 
 Features:
@@ -15,7 +15,7 @@ Example:
     >>> from mobi_physio_api import PluxDevice
     >>> device = PluxDevice(mac_address="00:07:80:8C:08:DF")
     >>> device.discover_sensors()
-    >>> device.setup_streaming() 
+    >>> device.setup_streaming()
     >>> device.start_acquisition()
 """
 

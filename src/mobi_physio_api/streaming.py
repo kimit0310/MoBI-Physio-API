@@ -9,7 +9,7 @@ from pylsl import StreamInfo, StreamOutlet
 
 class LSLStreamer:
     """Lab Streaming Layer (LSL) streamer for biosignals data."""
-    
+
     def __init__(
         self,
         stream_name: str = "biosignalsplux",
@@ -18,7 +18,7 @@ class LSLStreamer:
         sampling_rate: float = 1000.0,
     ) -> None:
         """Initialize LSL streamer.
-        
+
         Args:
             stream_name: Name of the LSL stream.
             stream_type: Type of the LSL stream.
@@ -29,20 +29,20 @@ class LSLStreamer:
         self.stream_type = stream_type
         self.source_id = source_id
         self.sampling_rate = sampling_rate
-        
+
         self.channels: list[str] = []  # For backward compatibility with tests
         self.channel_names: list[str] = []
         self.channel_types: list[str] = []
         self.info: StreamInfo | None = None
         self.outlet: StreamOutlet | None = None
-    
+
     def setup_channels(
         self,
         sensor_types: dict[int, str],
         channels: list[int],
     ) -> None:
         """Set up channel configuration for streaming.
-        
+
         Args:
             sensor_types: Mapping of port to sensor type string.
             channels: List of active channel ports.
@@ -50,10 +50,10 @@ class LSLStreamer:
         self.channels = []  # Reset channels list
         self.channel_names = []
         self.channel_types = []
-        
+
         for port in channels:
             sensor_type = sensor_types.get(port, "UNKNOWN")
-            
+
             # SpO2 sensors have two derivations (RED and INFRARED)
             if sensor_type == "SpO2":
                 for derivation in ["RED", "INFRARED"]:
@@ -73,13 +73,13 @@ class LSLStreamer:
                 self.channel_names.append(channel_name)
                 self.channel_types.append(sensor_type)
                 self.channels.append(str(port))
-    
+
     def create_stream(self) -> None:
         """Create the LSL stream with configured channels."""
         if not self.channel_names:
             msg = "No channels configured. Call setup_channels() first."
             raise RuntimeError(msg)
-        
+
         # Create stream info
         self.info = StreamInfo(
             name=self.stream_name,
@@ -89,7 +89,7 @@ class LSLStreamer:
             channel_format="float32",
             source_id=self.source_id,
         )
-        
+
         # Add channel metadata
         channels = self.info.desc().append_child("channels")
         for name, ch_type in zip(self.channel_names, self.channel_types, strict=True):
@@ -97,37 +97,37 @@ class LSLStreamer:
             ch.append_child_value("label", name)
             ch.append_child_value("unit", "microvolts")
             ch.append_child_value("type", ch_type)
-        
+
         # Create outlet
         self.outlet = StreamOutlet(self.info)
-    
+
     def push_sample(self, data: list[float], timestamp: float | None = None) -> None:
         """Push a data sample to the LSL stream.
-        
+
         Args:
             data: List of channel values.
             timestamp: Optional timestamp. If None, uses current time.
-            
+
         Raises:
             RuntimeError: If stream is not created.
         """
         if self.outlet is None:
             msg = "Stream not created. Call create_stream() first."
             raise RuntimeError(msg)
-        
+
         if timestamp is None:
             timestamp = time.time()
-        
+
         self.outlet.push_sample(data, timestamp)
-    
+
     def get_channel_count(self) -> int:
         """Get the total number of channels configured."""
         return len(self.channel_names)
-    
+
     def get_channel_names(self) -> list[str]:
         """Get the list of channel names."""
         return self.channel_names.copy()
-    
+
     def process_raw_data(
         self,
         raw_data: list[float],
@@ -135,23 +135,23 @@ class LSLStreamer:
         channels: list[int],
     ) -> list[float]:
         """Process raw sensor data for LSL streaming.
-        
+
         Handles special cases like SpO2 dual derivations and ACC triple axes.
-        
+
         Args:
             raw_data: Raw data from PLUX device.
             sensor_types: Mapping of port to sensor type string.
             channels: List of active channel ports.
-            
+
         Returns:
             Processed data ready for LSL streaming.
         """
         processed_data: list[float] = []
         data_index = 0
-        
+
         for port in channels:
             sensor_type = sensor_types.get(port, "UNKNOWN")
-            
+
             if sensor_type == "SpO2":
                 # SpO2 has two derivations (RED and INFRARED)
                 # For testing, we'll unpack a single value into two channels
@@ -176,5 +176,5 @@ class LSLStreamer:
                 if data_index < len(raw_data):
                     processed_data.append(raw_data[data_index])
                 data_index += 1
-        
+
         return processed_data
