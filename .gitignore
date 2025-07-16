@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Exception: Allow PLUX SDK shared libraries
+!PLUX-API-Python3/**/*.so
+
 # Distribution / packaging
 .Python
 build/
