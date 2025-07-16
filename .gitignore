@@ -1,6 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
+*.py[co]
 *$py.class
 
 # C extensions
@@ -8,6 +8,7 @@ __pycache__/
 
 # Exception: Allow PLUX SDK shared libraries
 !PLUX-API-Python3/**/*.so
+!PLUX-API-Python3/**/*.pyd
 
 # Distribution / packaging
 .Python
