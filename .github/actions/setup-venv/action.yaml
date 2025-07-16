@@ -1,0 +1,30 @@
+name: Setup venv
+description: Setup Python environment using uv
+
+inputs:
+  only-dev:
+    description: "Only install development dependencies"
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+  - name: Install uv
+    uses: astral-sh/setup-uv@v4
+    with:
+      enable-cache: true
+      cache-dependency-glob: "**/pyproject.toml"
+  
+  - name: Set up Python
+    run: uv python install
+    shell: bash
+  
+  - name: Install the project
+    run: |
+      if [ "${{ inputs.only-dev }}" = "true" ]; then
+        uv sync --only-dev
+      else
+        uv sync
+      fi
+    shell: bash
