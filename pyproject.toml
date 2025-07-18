@@ -29,7 +29,7 @@ Repository = "https://github.com/childmindresearch/MoBI-Physio-API"
 Documentation = "https://childmindresearch.github.io/MoBI-Physio-API"
 
 [project.scripts]
-mobi-physio-api = "mobi_physio_api.cli:main"
+mobi-physio-api = "mobi_physio_api.cli_simple:main"
 
 [tool.mypy]
 python_version = "3.10"

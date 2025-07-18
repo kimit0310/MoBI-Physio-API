@@ -213,6 +213,17 @@ Examples:
             logger.info("6. Linux: Check with 'bluetoothctl' or 'bluez-utils'")
             logger.info("7. Linux: Ensure your user is in the 'bluetooth' group")
 
+        logger.info("")
+        logger.info("🔹 IMPORTANT for PLUX devices:")
+        logger.info("   The device must be in DISCOVERABLE mode to connect.")
+        logger.info("   1. Turn on your PLUX device")
+        logger.info("   2. Put it in pairing mode:")
+        logger.info("      - Press and hold POWER button until LED blinks rapidly")
+        logger.info("      - OR press and hold BOTH buttons simultaneously")
+        logger.info("      - LED should blink blue/white rapidly")
+        logger.info("   3. Run: mobi-physio-api --discover")
+        logger.info("   4. If device appears, try connecting again")
+
         return 1
 
 
