@@ -2,6 +2,9 @@
 
 [![Tests](https://github.com/childmindresearch/MoBI-Physio-API/actions/workflows/test.yaml/badge.svg)](https://github.com/childmindresearch/MoBI-Physio-API/actions/workflows/test.yaml)
 [![Documentation](https://github.com/childmindresearch/MoBI-Physio-API/actions/workflows/docs.yaml/badge.svg)](https://github.com/childmindresearch/MoBI-Physio-API/actions/workflows/docs.yaml)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+![stability-stable](https://img.shields.io/badge/stability-stable-green.svg)
+[![LGPL-2.1 License](https://img.shields.io/badge/license-LGPL--2.1-blue.svg)](https://github.com/childmindresearch/MoBI-Physio-API/blob/main/LICENSE)
 
 A robust, cross-platform Python API for PLUX biosignals devices with automatic sensor detection and Lab Streaming Layer (LSL) integration.
 

@@ -8,7 +8,7 @@ from pylsl import StreamInfo, StreamOutlet
 
 
 class LSLStreamer:
-    """Lab Streaming Layer (LSL) streamer for biosignals data."""
+    """Lab Streaming Layer streamer for real-time biosignals data transmission."""
 
     def __init__(
         self,
@@ -17,13 +17,13 @@ class LSLStreamer:
         source_id: str = "biosignalsplux",
         sampling_rate: float = 1000.0,
     ) -> None:
-        """Initialize LSL streamer.
+        """Initialize LSL streamer for biosignals data.
 
         Args:
-            stream_name: Name of the LSL stream.
-            stream_type: Type of the LSL stream.
-            source_id: Unique source identifier.
-            sampling_rate: Sampling rate in Hz.
+            stream_name: Name identifier for the LSL stream.
+            stream_type: Category of data being streamed.
+            source_id: Unique source identifier for this stream.
+            sampling_rate: Data acquisition frequency in Hz.
         """
         self.stream_name = stream_name
         self.stream_type = stream_type
@@ -41,11 +41,11 @@ class LSLStreamer:
         sensor_types: dict[int, str],
         channels: list[int],
     ) -> None:
-        """Set up channel configuration for streaming.
+        """Configure channels based on detected sensors.
 
         Args:
-            sensor_types: Mapping of port to sensor type string.
-            channels: List of active channel ports.
+            sensor_types: Mapping of port numbers to sensor type strings.
+            channels: List of active channel port numbers.
         """
         self.channels = []  # Reset channels list
         self.channel_names = []
@@ -75,7 +75,7 @@ class LSLStreamer:
                 self.channels.append(str(port))
 
     def create_stream(self) -> None:
-        """Create the LSL stream with configured channels."""
+        """Create LSL stream outlet with configured channels."""
         if not self.channel_names:
             msg = "No channels configured. Call setup_channels() first."
             raise RuntimeError(msg)

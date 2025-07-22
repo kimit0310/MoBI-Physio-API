@@ -40,15 +40,15 @@ DEFAULT_CHANNEL_NAMES = {
 
 
 def detect_sensor_type(sensor: Any, properties: dict[str, Any], port: int) -> str:  # noqa: ANN401
-    """Automatically detect sensor type based on sensor properties and characteristics.
+    """Detect sensor type from PLUX sensor object and properties.
 
     Args:
-        sensor: PLUX sensor object
-        properties: Device properties dictionary
-        port: Port number
+        sensor: PLUX sensor object with type and characteristics.
+        properties: Device properties dictionary.
+        port: Physical port number on device.
 
     Returns:
-        Detected sensor type string
+        Detected sensor type string (e.g., 'EMG', 'ECG', 'ACC_X').
     """
     # Known sensor type mappings from PLUX documentation
     type_map = SENSOR_TYPE_MAPPING
@@ -122,17 +122,21 @@ def detect_sensor_type(sensor: Any, properties: dict[str, Any], port: int) -> st
 
 
 def get_sensor_info(
-    device: Any,
+    device: Any,  # noqa: ANN401
 ) -> tuple[  # noqa: ANN401
     list[int], dict[int, str], dict[int, dict[str, Any]], list[Any]
 ]:
-    """Get sensor information and automatically detect channels.
+    """Get sensor configuration and automatically detect channels.
 
     Args:
-        device: PLUX device object
+        device: Connected PLUX device object.
 
     Returns:
-        Tuple of (channels, sensor_types, sensor_info, sources)
+        Tuple containing:
+        - List of active channel numbers
+        - Dict mapping port numbers to sensor types
+        - Dict of detailed sensor information per port
+        - List of configured source objects
     """
     try:
         sensors = device.getSensors()

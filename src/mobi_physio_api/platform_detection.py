@@ -5,13 +5,13 @@ from pathlib import Path
 
 
 def get_plux_sdk_path() -> str:
-    """Get the correct PLUX SDK path based on the current platform and Python version.
+    """Get correct PLUX SDK path for current platform and Python version.
 
     Returns:
-        The relative path to the appropriate PLUX SDK directory.
+        Relative path to the appropriate PLUX SDK directory.
 
     Raises:
-        RuntimeError: If the platform is unsupported or no compatible SDK found.
+        RuntimeError: If platform is unsupported or no compatible SDK found.
     """
     system = platform.system()
 
@@ -27,7 +27,14 @@ def get_plux_sdk_path() -> str:
 
 
 def _get_macos_path() -> str:
-    """Get macOS-specific PLUX SDK path."""
+    """Get macOS-specific PLUX SDK path based on architecture and Python version.
+
+    Returns:
+        Path to macOS PLUX SDK directory.
+
+    Raises:
+        RuntimeError: If no compatible SDK directory found.
+    """
     machine = platform.machine()
     python_version = "".join(platform.python_version().split(".")[:2])
 

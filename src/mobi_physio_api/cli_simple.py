@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from mobi_physio_api.device import PluxDevice
+from mobi_physio_api.utils import setup_signal_handler
 
 # Set up logging
 logging.basicConfig(
@@ -20,12 +21,16 @@ logger = logging.getLogger(__name__)
 
 
 def main() -> int:
-    """Main CLI entry point."""
+    """Main entry point for PLUX device streaming CLI.
+
+    Returns:
+        Exit code (0 for success, 1 for error).
+    """
     parser = argparse.ArgumentParser(
         description="Stream PLUX biosignals to LSL",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    
+
     parser.add_argument(
         "--mac",
         required=True,
@@ -54,15 +59,15 @@ def main() -> int:
             "Example: --sensors 1:EMG,2:RSP,3:EDA,5:ECG,9:SpO2"
         ),
     )
-    
+
     args = parser.parse_args()
-    
+
     # Parse manual sensor mapping if provided
     manual_sensor_map = {}
     if args.sensors:
         try:
-            for mapping in args.sensors.split(','):
-                port_str, sensor_type = mapping.strip().split(':')
+            for mapping in args.sensors.split(","):
+                port_str, sensor_type = mapping.strip().split(":")
                 port = int(port_str)
                 manual_sensor_map[port] = sensor_type.upper()
             logger.info("Manual sensor mapping: %s", manual_sensor_map)
@@ -70,13 +75,13 @@ def main() -> int:
             logger.error("Invalid sensor mapping format: %s", e)
             logger.error("Expected format: --sensors 1:EMG,2:RSP,3:EDA")
             return 1
-    
+
     try:
         logger.info("Initializing PLUX device...")
         logger.info("Device MAC: %s", args.mac)
         logger.info("Sampling rate: %s Hz", args.rate)
         logger.info("Stream name: %s", args.stream_name)
-        
+
         # Create device
         device = PluxDevice(
             mac_address=args.mac,
@@ -85,16 +90,19 @@ def main() -> int:
             plux_sdk_path=args.sdk_path,
             manual_sensor_map=manual_sensor_map,
         )
-        
+
         logger.info("Device initialized successfully!")
-        
+
+        # Set up signal handler for graceful shutdown
+        setup_signal_handler(device)
+
         # Connect and start streaming
         logger.info("Connecting and setting up streaming...")
         device.connect_and_setup()
-        
+
         logger.info("Starting streaming...")
         device.start_streaming()
-        
+
     except KeyboardInterrupt:
         logger.info("Stopped by user")
         return 0
@@ -102,7 +110,7 @@ def main() -> int:
         logger.error("Error: %s", e)
         logger.error("Error type: %s", type(e).__name__)
         return 1
-    
+
     return 0
 
 
