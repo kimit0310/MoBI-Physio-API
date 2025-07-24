@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import time
-
 from pylsl import StreamInfo, StreamOutlet
 
 
@@ -101,12 +99,11 @@ class LSLStreamer:
         # Create outlet
         self.outlet = StreamOutlet(self.info)
 
-    def push_sample(self, data: list[float], timestamp: float | None = None) -> None:
+    def push_sample(self, data: list[float]) -> None:
         """Push a data sample to the LSL stream.
 
         Args:
             data: List of channel values.
-            timestamp: Optional timestamp. If None, uses current time.
 
         Raises:
             RuntimeError: If stream is not created.
@@ -115,10 +112,8 @@ class LSLStreamer:
             msg = "Stream not created. Call create_stream() first."
             raise RuntimeError(msg)
 
-        if timestamp is None:
-            timestamp = time.time()
-
-        self.outlet.push_sample(data, timestamp)
+        # Let LSL handle automatic timestamping for best precision
+        self.outlet.push_sample(data)
 
     def get_channel_count(self) -> int:
         """Get the total number of channels configured."""

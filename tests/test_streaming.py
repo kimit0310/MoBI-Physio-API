@@ -163,8 +163,7 @@ class TestLSLStreamer:
         streamer.outlet = mock_outlet
 
         data = [1.0, 2.0, 3.0]
-        timestamp = 1234567.89
 
-        streamer.push_sample(data, timestamp)
+        streamer.push_sample(data)
 
-        mock_outlet.push_sample.assert_called_once_with(data, timestamp)
+        mock_outlet.push_sample.assert_called_once_with(data)
